@@ -68,9 +68,9 @@ w_{i,j+1} \;=\; (1 - 2\lambda)\,w_{i,j}
 \;+\; \lambda\bigl(w_{i+1,j} + w_{i-1,j}\bigr),
 \]
 with $\lambda = k/h^{2}$. Each new value is an explicit weighted average of
-neighbouring old values, so no linear system is solved at each step. The local
-truncation error is $O(k + h^{2})$, and the von Neumann stability analysis
-gives the conditional stability bound $\lambda \le \tfrac12$.
+neighboring old values, so there is no linear system to solve at each step.
+The local truncation error is $O(k + h^{2})$, and the von Neumann stability
+analysis gives the conditional stability bound $\lambda \le \tfrac12$.
 
 \paragraph{Backward-Difference (heat equation).}
 Using a backward time difference instead gives the implicit update
@@ -104,16 +104,15 @@ Consider
 \[
 u_{xx} + u_{yy} = 0, \qquad 0 < x < 1, \quad 0 < y < 1,
 \]
-with $u(0,y) = u(x,0) = 0$, $u(x,1) = 100\,x$, and $u(1,y) = 100\,y$. A quick
-observation makes this problem unusually convenient: the function $u(x,y) =
-100\,x\,y$ is harmonic ($u_{xx}=u_{yy}=0$) and matches all four boundary
-conditions, including the corner $(1,1)$ where the two non-zero edges agree on
-the value $100$. So this is the exact analytic solution. I use it as the
-reference for the error tables.
+with $u(0,y) = u(x,0) = 0$, $u(x,1) = 100\,x$, and $u(1,y) = 100\,y$. It
+turns out the exact solution here is just $u(x,y) = 100\,x\,y$: it is harmonic
+($u_{xx} = u_{yy} = 0$) and satisfies all four boundary conditions, with the
+two non-zero edges both giving the corner value $u(1,1) = 100$. I use this
+closed form as the reference for the error tables.
 
 Table~\ref{tab:Ah4} lists the FD values at all interior nodes for $h = 1/4$.
-Even on this very coarse grid the values agree with $100\,x_i\,y_j$ to roughly
-$8 \times 10^{-9}$, which is essentially the Gauss--Seidel stopping tolerance.
+Even on this very coarse grid the values agree with $100\,x_i\,y_j$ to about
+$8 \times 10^{-9}$, which is roughly the Gauss--Seidel stopping tolerance.
 
 \begin{table}[H]
 \centering
@@ -136,7 +135,7 @@ as $h$ shrinks.}
 \includegraphics[width=\textwidth]{figA.png}
 \caption{Problem A. Left: contour of the exact solution $u(x,y) = 100\,x\,y$
 on the unit square. Right: absolute error $|u - w_{ij}|$ at $h = 1/16$; the
-error is essentially uniform across the interior at the iteration tolerance
+error is roughly uniform across the interior at the iteration tolerance
 ($\sim\!10^{-7}$).}
 \label{fig:A}
 \end{figure}
@@ -176,7 +175,7 @@ every other case, giving $\lambda = 1$, which is well above the Forward
 stability threshold but no obstacle for the implicit schemes.
 
 Table~\ref{tab:Bvals} compares the three convergent runs at $t = T = 0.5$ at
-all interior nodes, and Table~\ref{tab:Berr} summarises the max errors over
+all interior nodes, and Table~\ref{tab:Berr} summarizes the max errors over
 the whole space-time grid for all four runs. Figure~\ref{fig:B} shows the
 final profiles, the blow-up of the unstable Forward run, and the
 error-vs-time curves.
@@ -223,7 +222,7 @@ enough to swamp the small true solution and produces the final
 $|w|_{\infty} \approx 6 \times 10^{6}$.
 
 The Backward-Difference and Crank--Nicolson methods both stay stable at
-$\lambda = 1$, but their accuracies differ markedly: the max error is
+$\lambda = 1$, but their accuracies are very different: the max error is
 $2.03 \times 10^{-2}$ for BD and $2.73 \times 10^{-3}$ for CN, almost an
 order of magnitude smaller. This matches the theoretical truncation orders:
 BD is $O(k + h^{2})$ and CN is $O(k^{2} + h^{2})$, so at $k = 0.01$ the
@@ -245,18 +244,15 @@ with exact solution
 u(x, t) \;=\; e^{-\pi^{2} t}\sin(\pi x) \;+\;
 \tfrac{1}{2}\,e^{-9\pi^{2} t}\sin(3\pi x).
 \]
-The point of this experiment is that the heat equation diagonalises in
-the sine basis, so each Fourier mode decays at its own rate $e^{-n^{2}\pi^{2}t}$.
-The $n = 3$ mode decays nine times faster than the $n = 1$ mode and, even
-though it starts with half the amplitude, it is almost gone by $t = 0.05$.
-This is interesting because (a) it gives a direct visual demonstration of why
-implicit smoothers are so effective for elliptic problems, and (b) it lets me
-check that Crank--Nicolson correctly damps high modes without the
-overshooting that Forward-Difference would produce near the stability limit
-on the high-frequency component.
+I picked this because each Fourier mode of the heat equation decays at its
+own rate $e^{-n^{2}\pi^{2}t}$, so even though the $n = 3$ mode starts with
+half the amplitude, it dies off nine times faster than the $n = 1$ mode and
+is almost gone by $t = 0.05$. It also lets me check that Crank--Nicolson
+handles the high-frequency component cleanly at a step size that would
+destroy Forward-Difference.
 
-I use Crank--Nicolson with $h = 0.05$, $k = 0.005$ (so $\lambda = 2.0$, well
-outside the Forward stability region but harmless for CN), integrating to
+I use Crank--Nicolson with $h = 0.05$, $k = 0.005$, so $\lambda = 2.0$, well
+outside the Forward stability region but fine for CN. I integrate to
 $T = 0.2$. Table~\ref{tab:C1} shows the profile at $t = 0.05$ against the
 exact solution.
 
@@ -273,7 +269,7 @@ third interior point. $h = 0.05$, $k = 0.005$.}
 \includegraphics[width=\textwidth]{figC1.png}
 \caption{Problem C1. Left: Crank--Nicolson profile (markers) on top of the
 exact two-mode solution (lines) at five times. The $n = 3$ bump in the
-initial condition is essentially gone by $t = 0.05$. Right: amplitudes of
+initial condition is almost gone by $t = 0.05$. Right: amplitudes of
 the $n = 1$ and $n = 3$ modes extracted from the numerical solution match
 the predicted $e^{-\pi^{2}t}$ and $\tfrac12 e^{-9\pi^{2}t}$ decay rates over
 two and a half orders of magnitude.}
@@ -299,8 +295,8 @@ solution. Plugging into the PDE gives
 \[
 f(x, y) \;=\; -2\pi^{2}\,\sin(\pi x)\sin(\pi y).
 \]
-This is a manufactured-solution experiment: I know the answer, so I can
-isolate the discretisation error of the five-point stencil. Because the exact
+This is a manufactured-solution setup: I know the answer, so I can isolate
+the discretization error of the five-point stencil. Because the exact
 solution is genuinely smooth and \emph{not} a low-degree polynomial, the
 $O(h^{2})$ truncation error is no longer hidden by the special property that
 saved Problem~A. The discrete equation becomes
@@ -329,10 +325,10 @@ sit right on it.}
 
 The errors shrink by a factor of about $4$ each time $h$ is halved
 ($5.3\!\times\!10^{-2} \to 1.3\!\times\!10^{-2} \to 3.2\!\times\!10^{-3} \to
-8.0\!\times\!10^{-4}$), which is precisely the $O(h^{2})$ behaviour
-predicted by the truncation-error analysis. The Gauss--Seidel iteration
-count again roughly quadruples per refinement ($31, 121, 452, 1667$),
-matching the $O(h^{-2})$ scaling I observed in Problem~A.
+8.0\!\times\!10^{-4}$), which matches the $O(h^{2})$ rate predicted by the
+truncation-error analysis. The Gauss--Seidel iteration count again roughly
+quadruples per refinement ($31, 121, 452, 1667$), matching the $O(h^{-2})$
+scaling I saw in Problem~A.
 
 \section{Discussion}
 \textbf{Which methods are most accurate?} On the heat equation,
@@ -341,13 +337,13 @@ it produced an error roughly an order of magnitude smaller than
 Backward-Difference. The Forward-Difference scheme can match CN when the
 stability constraint is satisfied, but it costs a much smaller time step to
 get there. On the elliptic side, the five-point stencil with Gauss--Seidel
-gave essentially the exact answer for Problem~A and $O(h^{2})$ convergence
-on the Poisson check.
+gave the exact answer (to iteration tolerance) for Problem~A and clean
+$O(h^{2})$ convergence on the Poisson check.
 
 \textbf{How does mesh refinement affect the error?} For the five-point
 stencil applied to Poisson (Problem~C2), halving $h$ reduced the max error
 by a factor of $4$, matching the theoretical $O(h^{2})$ rate. For the heat
-equation, CN gave $O(k^{2} + h^{2})$ behaviour, so when $k$ and $h$ shrink
+equation, CN gave $O(k^{2} + h^{2})$ behavior, so when $k$ and $h$ shrink
 together by the same factor the error drops by roughly $4$. BD has only
 $O(k + h^{2})$, so for the same shrink factor the temporal part of the error
 only halves.
